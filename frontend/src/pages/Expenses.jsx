@@ -160,13 +160,15 @@ export default function Expenses() {
         </div>
       )}
 
-      <ExpenseForm
-        open={formOpen}
-        onClose={() => { setFormOpen(false); setEditing(null) }}
-        onSaved={onSaved}
-        categories={categories}
-        expense={editing}
-      />
+      {formOpen && (
+        <ExpenseForm
+          open
+          onClose={() => { setFormOpen(false); setEditing(null) }}
+          onSaved={onSaved}
+          categories={categories}
+          expense={editing}
+        />
+      )}
     </div>
   )
 }

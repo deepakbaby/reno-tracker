@@ -88,12 +88,14 @@ export default function Tasks() {
         </div>
       )}
 
-      <TodoForm
-        open={formOpen}
-        onClose={() => { setFormOpen(false); setEditing(null) }}
-        onSaved={onSaved}
-        todo={editing}
-      />
+      {formOpen && (
+        <TodoForm
+          open
+          onClose={() => { setFormOpen(false); setEditing(null) }}
+          onSaved={onSaved}
+          todo={editing}
+        />
+      )}
     </div>
   )
 }
