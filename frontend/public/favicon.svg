@@ -1,0 +1,9 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="14" fill="#0b1120"/>
+  <g fill="none" stroke="#22c55e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 31 32 16 49 31"/>
+    <path d="M19 28 V47 H45 V28"/>
+  </g>
+  <text x="32" y="44" font-family="Helvetica, Arial, sans-serif" font-size="19"
+        font-weight="700" fill="#22c55e" text-anchor="middle">€</text>
+</svg>

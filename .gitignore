@@ -1,0 +1,25 @@
+# ─── Secrets ──────────────────────────────────────────────────────────────────
+.env
+backend/.env
+*client_secret*.json
+
+# ─── Data (DB + invoices stay out of git) ─────────────────────────────────────
+backend/data/
+backend/*.db
+backend/*.db-*
+backend/*.sqlite3
+backend/*.sqlite3-*
+
+# ─── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+backend/venv/
+backend/.venv/
+
+# ─── Node / frontend build ────────────────────────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/dev-dist/
+
+# ─── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store

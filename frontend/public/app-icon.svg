@@ -1,0 +1,12 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#0b1120"/>
+  <g fill="none" stroke="#22c55e" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+    <!-- roof -->
+    <path d="M120 246 256 132 392 246"/>
+    <!-- walls -->
+    <path d="M154 224 V382 H358 V224"/>
+  </g>
+  <!-- euro mark inside -->
+  <text x="256" y="356" font-family="DM Sans, Helvetica, Arial, sans-serif" font-size="150"
+        font-weight="600" fill="#22c55e" text-anchor="middle">€</text>
+</svg>

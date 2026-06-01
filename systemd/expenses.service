@@ -1,0 +1,20 @@
+[Unit]
+Description=House Expense Tracker (Flask + gunicorn)
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/reno-tracker/backend
+EnvironmentFile=/home/ubuntu/reno-tracker/backend/.env
+# 2 workers; long timeout so resumable Drive uploads of large PDFs don't get killed.
+ExecStart=/home/ubuntu/reno-tracker/backend/venv/bin/gunicorn -w 2 -b 127.0.0.1:5001 --timeout 120 app:app
+Restart=on-failure
+RestartSec=5
+
+# Filesystem hardening
+ProtectSystem=full
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
