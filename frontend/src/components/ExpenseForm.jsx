@@ -9,6 +9,7 @@ export default function ExpenseForm({ open, onClose, onSaved, categories, expens
     expense ? (expense.amount_cents / 100).toFixed(2) : ''
   )
   const [date, setDate] = useState(expense?.date || todayISO())
+  const [name, setName] = useState(expense?.name || '')
   const [vendor, setVendor] = useState(expense?.vendor || '')
   const [categoryId, setCategoryId] = useState(
     expense?.category_id != null ? String(expense.category_id) : ''
@@ -27,13 +28,14 @@ export default function ExpenseForm({ open, onClose, onSaved, categories, expens
     const amt = parseFloat(amount)
     if (isNaN(amt) || amt < 0) { setError('Enter a valid amount.'); return }
     if (!date) { setError('Pick a date.'); return }
-    if (!vendor.trim()) { setError('Enter a vendor / name.'); return }
+    if (!name.trim()) { setError('Enter a name.'); return }
 
     setBusy(true); setError('')
     try {
       const form = new FormData()
       form.append('amount', amount)
       form.append('date', date)
+      form.append('name', name.trim())
       form.append('vendor', vendor.trim())
       form.append('category_id', categoryId || 'null')
       form.append('note', note.trim())
@@ -90,7 +92,15 @@ export default function ExpenseForm({ open, onClose, onSaved, categories, expens
         </div>
 
         <div>
-          <label className="label">Vendor / name</label>
+          <label className="label">Name</label>
+          <input
+            className="input mt-1" placeholder="e.g. Living room sofa"
+            value={name} onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="label">Vendor (optional)</label>
           <input
             className="input mt-1" placeholder="e.g. IKEA"
             value={vendor} onChange={(e) => setVendor(e.target.value)}

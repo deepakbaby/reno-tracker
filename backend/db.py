@@ -26,7 +26,8 @@ def init_db():
             amount_cents  INTEGER NOT NULL,
             currency      TEXT NOT NULL DEFAULT 'EUR',
             date          TEXT NOT NULL,
-            vendor        TEXT NOT NULL,
+            name          TEXT,
+            vendor        TEXT,
             category_id   INTEGER REFERENCES categories(id) ON DELETE SET NULL,
             note          TEXT,
             drive_file_id TEXT,
@@ -57,6 +58,11 @@ def init_db():
     todo_cols = [r["name"] for r in db.execute("PRAGMA table_info(todos)").fetchall()]
     if "priority" not in todo_cols:
         db.execute("ALTER TABLE todos ADD COLUMN priority TEXT NOT NULL DEFAULT 'medium'")
+
+    # Migration: add `name` to a pre-existing expenses table that lacks it.
+    exp_cols = [r["name"] for r in db.execute("PRAGMA table_info(expenses)").fetchall()]
+    if "name" not in exp_cols:
+        db.execute("ALTER TABLE expenses ADD COLUMN name TEXT")
 
     # Seed a few starter categories only on first run (empty table).
     existing = db.execute("SELECT COUNT(*) AS c FROM categories").fetchone()["c"]
@@ -123,7 +129,7 @@ def category_exists(category_id):
 # ─── Expenses ─────────────────────────────────────────────────────────────────
 
 EXPENSE_SELECT = """
-    SELECT e.id, e.amount_cents, e.currency, e.date, e.vendor,
+    SELECT e.id, e.amount_cents, e.currency, e.date, e.name, e.vendor,
            e.category_id, c.name AS category_name,
            e.note, e.drive_file_id, e.drive_link, e.created_at
     FROM expenses e
@@ -153,12 +159,12 @@ def get_expense(expense_id):
     return dict(row) if row else None
 
 
-def create_expense(amount_cents, date, vendor, category_id, note, drive_file_id=None, drive_link=None):
+def create_expense(amount_cents, date, name, vendor, category_id, note, drive_file_id=None, drive_link=None):
     db = get_db()
     cur = db.execute("""
-        INSERT INTO expenses (amount_cents, currency, date, vendor, category_id, note, drive_file_id, drive_link)
-        VALUES (?, 'EUR', ?, ?, ?, ?, ?, ?)
-    """, (amount_cents, date, vendor, category_id, note, drive_file_id, drive_link))
+        INSERT INTO expenses (amount_cents, currency, date, name, vendor, category_id, note, drive_file_id, drive_link)
+        VALUES (?, 'EUR', ?, ?, ?, ?, ?, ?, ?)
+    """, (amount_cents, date, name, vendor, category_id, note, drive_file_id, drive_link))
     db.commit()
     new_id = cur.lastrowid
     db.close()
@@ -167,7 +173,7 @@ def create_expense(amount_cents, date, vendor, category_id, note, drive_file_id=
 
 def update_expense(expense_id, fields):
     """Patch only the provided columns. `fields` is a dict of column->value."""
-    allowed = {"amount_cents", "date", "vendor", "category_id", "note", "drive_file_id", "drive_link"}
+    allowed = {"amount_cents", "date", "name", "vendor", "category_id", "note", "drive_file_id", "drive_link"}
     sets = {k: v for k, v in fields.items() if k in allowed}
     if not sets:
         return get_expense(expense_id)

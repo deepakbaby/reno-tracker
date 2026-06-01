@@ -45,7 +45,7 @@ export default function Expenses() {
   }
 
   const remove = async (exp) => {
-    if (!confirm(`Delete the ${fmtCents(exp.amount_cents)} expense from ${exp.vendor}?`)) return
+    if (!confirm(`Delete "${exp.name || exp.vendor}" (${fmtCents(exp.amount_cents)})?`)) return
     try {
       await api.deleteExpense(exp.id)
       await Promise.all([load(), loadCategories()])
@@ -183,11 +183,15 @@ function Stat({ label, value }) {
 }
 
 function ExpenseRow({ exp, first, onEdit, onDelete }) {
+  const title = exp.name || exp.vendor || '—'
+  // Show the vendor as a subtitle only when there's a distinct name above it.
+  const showVendor = exp.name && exp.vendor
   return (
     <div className={`flex items-center gap-3 px-4 py-3.5 ${first ? '' : 'border-t border-line'}`}>
       <div className="flex-1 min-w-0" onClick={onEdit} role="button">
-        <p className="font-medium truncate">{exp.vendor}</p>
-        <p className="text-xs text-neutral-500 mt-0.5">
+        <p className="font-medium truncate">{title}</p>
+        <p className="text-xs text-neutral-500 mt-0.5 truncate">
+          {showVendor && <>{exp.vendor}{' · '}</>}
           {fmtDate(exp.date)}
           {' · '}
           <span className={exp.category_name ? '' : 'italic text-neutral-600'}>

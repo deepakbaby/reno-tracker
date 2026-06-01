@@ -156,6 +156,7 @@ def get_one_expense(expense_id):
 def add_expense():
     amount_cents = euros_to_cents(_form_value("amount"))
     date = (_form_value("date") or "").strip()
+    name = (_form_value("name") or "").strip()
     vendor = (_form_value("vendor") or "").strip()
     note = (_form_value("note") or "").strip()
     category_id = _form_value("category_id")
@@ -165,8 +166,8 @@ def add_expense():
         return jsonify({"error": "A valid amount is required"}), 400
     if not date:
         return jsonify({"error": "date is required"}), 400
-    if not vendor:
-        return jsonify({"error": "vendor is required"}), 400
+    if not name:
+        return jsonify({"error": "name is required"}), 400
     if category_id is not None and not db.category_exists(category_id):
         return jsonify({"error": "Unknown category"}), 400
 
@@ -175,7 +176,7 @@ def add_expense():
     except ReauthRequired:
         return jsonify({"error": "drive_reauth_required"}), 503
 
-    exp = db.create_expense(amount_cents, date, vendor, category_id, note, file_id, link)
+    exp = db.create_expense(amount_cents, date, name, vendor, category_id, note, file_id, link)
     return jsonify(exp), 201
 
 
@@ -194,7 +195,7 @@ def edit_expense(expense_id):
             return jsonify({"error": "A valid amount is required"}), 400
         fields["amount_cents"] = amount_cents
 
-    for key in ("date", "vendor", "note"):
+    for key in ("date", "name", "vendor", "note"):
         val = _form_value(key)
         if val is not None:
             fields[key] = val.strip()
