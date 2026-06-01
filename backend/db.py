@@ -4,6 +4,18 @@ import os
 DB_PATH = os.environ.get("DB_PATH", "expenses.db")
 
 
+def _ensure_column(db, table, column, alter_sql):
+    """Add a column if missing; tolerate a concurrent worker having just added it."""
+    cols = [r["name"] for r in db.execute(f"PRAGMA table_info({table})").fetchall()]
+    if column in cols:
+        return
+    try:
+        db.execute(alter_sql)
+    except sqlite3.OperationalError as e:
+        if "duplicate column name" not in str(e).lower():
+            raise
+
+
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -54,15 +66,11 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_todos_status ON todos(status);
     """)
 
-    # Migration: add `priority` to a pre-existing todos table that lacks it.
-    todo_cols = [r["name"] for r in db.execute("PRAGMA table_info(todos)").fetchall()]
-    if "priority" not in todo_cols:
-        db.execute("ALTER TABLE todos ADD COLUMN priority TEXT NOT NULL DEFAULT 'medium'")
-
-    # Migration: add `name` to a pre-existing expenses table that lacks it.
-    exp_cols = [r["name"] for r in db.execute("PRAGMA table_info(expenses)").fetchall()]
-    if "name" not in exp_cols:
-        db.execute("ALTER TABLE expenses ADD COLUMN name TEXT")
+    # Idempotent, race-safe column migrations. gunicorn boots several workers
+    # that each run init_db() concurrently, so two workers can both pass the
+    # "column missing?" check and both issue the ALTER — guard the duplicate.
+    _ensure_column(db, "todos", "priority", "ALTER TABLE todos ADD COLUMN priority TEXT NOT NULL DEFAULT 'medium'")
+    _ensure_column(db, "expenses", "name", "ALTER TABLE expenses ADD COLUMN name TEXT")
 
     # Seed a few starter categories only on first run (empty table).
     existing = db.execute("SELECT COUNT(*) AS c FROM categories").fetchone()["c"]
