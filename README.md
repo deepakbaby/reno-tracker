@@ -113,14 +113,14 @@ untouched.
 
 ```bash
 # 1. Clone
-git clone <repo-url> /home/ubuntu/reno-tracker
-cd /home/ubuntu/reno-tracker
+git clone <repo-url> /opt/apps/reno-tracker
+cd /opt/apps/reno-tracker
 
 # 2. Backend
 cd backend
 python3 -m venv venv && ./venv/bin/pip install -r requirements.txt
 cp ../.env.example .env   # then edit .env: password, secret, Drive creds
-mkdir -p /home/ubuntu/reno-tracker/data
+mkdir -p /opt/apps/reno-tracker/data
 
 # 3. Frontend build
 cd ../frontend && npm install && npm run build

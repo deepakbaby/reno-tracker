@@ -4,7 +4,7 @@ set -e
 # Pull, rebuild the frontend, refresh deps, restart the service.
 # Run on the Lightsail box from the repo root.
 
-APP_DIR=/home/ubuntu/reno-tracker
+APP_DIR=/opt/apps/reno-tracker
 cd "$APP_DIR"
 
 echo "==> Pulling latest..."

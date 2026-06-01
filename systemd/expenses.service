@@ -5,10 +5,10 @@ After=network.target
 [Service]
 User=ubuntu
 Group=www-data
-WorkingDirectory=/home/ubuntu/reno-tracker/backend
-EnvironmentFile=/home/ubuntu/reno-tracker/backend/.env
+WorkingDirectory=/opt/apps/reno-tracker/backend
+EnvironmentFile=/opt/apps/reno-tracker/backend/.env
 # 2 workers; long timeout so resumable Drive uploads of large PDFs don't get killed.
-ExecStart=/home/ubuntu/reno-tracker/backend/venv/bin/gunicorn -w 2 -b 127.0.0.1:5001 --timeout 120 app:app
+ExecStart=/opt/apps/reno-tracker/backend/venv/bin/gunicorn -w 2 -b 127.0.0.1:5001 --timeout 120 app:app
 Restart=on-failure
 RestartSec=5
 
