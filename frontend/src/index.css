@@ -51,9 +51,9 @@
   }
   /* Round green add button (top-right of page headers) */
   .btn-add {
-    @apply w-11 h-11 rounded-full bg-forest-600 hover:bg-forest-500 text-white
-           grid place-items-center text-2xl font-light shadow-lg shadow-black/30
-           active:scale-95 transition-all shrink-0;
+    /* Just the + glyph — no circle — for a cleaner, modern look. */
+    @apply grid place-items-center w-10 h-10 -mr-1 text-[2rem] font-light leading-none
+           text-brand-400 hover:text-brand-300 active:scale-90 transition-transform shrink-0;
   }
 
   /* Inputs */
